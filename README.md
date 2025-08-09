@@ -1,6 +1,8 @@
 # handrecorder
 A better interactive hand editor that can render and parse handviewer link (.lin also supported).
 
+For easy use, download the handrecorder.html file and open it in your browser. You should be able to follow the instructions to edit any hand (or click load example if you don't have a hand in mind) and record the auction and/or play.
+
 **TODO**
 - [x] Get hands from acbl live
 - [ ] Get hands from hand records
