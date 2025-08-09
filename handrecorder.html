@@ -139,6 +139,38 @@
   <div class="container" id="container">
     <!-- LEFT: settings -->
     <section class="left">
+      <!-- IMPORTER -->
+      <fieldset style="margin-bottom:12px;">
+        <legend>Import results & extract Handviewer links</legend>
+        <div class="grid" style="grid-template-columns: 1fr; gap: var(--gap);">
+
+          <div>
+            <label for="resultHtml">Paste the page HTML</label>
+            <textarea id="resultHtml" placeholder="Paste the HTML source of the results page here"></textarea>
+          </div>
+
+          <div class="row" style="grid-template-columns: 1fr auto auto; align-items:end;">
+            <div>
+              <label for="filePick">Or pick a saved .html file</label>
+              <input id="filePick" type="file" accept=".html,.htm,text/html" />
+            </div>
+            <button class="btn" id="btnExtract">Extract from pasted</button>
+            <button class="btn" id="btnClearList">Clear list</button>
+          </div>
+
+          <div class="bar" style="margin-top:4px;">
+            <span class="muted" id="foundCount">No links yet.</span>
+            <button class="btn ghost" id="btnCopyAll" style="display:none;">Copy all</button>
+          </div>
+
+          <div class="list" id="foundList" aria-live="polite"></div>
+
+          <div class="hint">
+            We detect any <code>handviewer.html</code> link with <code>?lin=</code> or explicit <code>n/e/s/w/a/p</code> params (also <code>myhand</code> / <code>linurl</code>).
+            Links are normalized to the official endpoint: <code>https://www.bridgebase.com/tools/handviewer.html</code> per the Handviewer docs.
+          </div>
+        </div>
+      </fieldset>
       <div class="controls">
         <input id="inputLink" type="text" placeholder="Paste a BBO Handviewer link (e.g., https://www.bridgebase.com/tools/handviewer.html?n=...&a=...)" />
         <div style="display:flex; gap:8px;">
@@ -251,6 +283,294 @@
 
     // Debounce for live updates
     const debounce = (fn, ms=350) => { let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args),ms); }; };
+
+    // ======= Handviewer Link Extraction =======
+    function extractHandviewerLinks(htmlContent) {
+      const links = [];
+      
+      // Pattern to match handviewer URLs
+      const patterns = [
+        /https?:\/\/[^\/]*bridgebase\.com\/tools\/handviewer\.html\?[^"'\s<>]*/gi,
+        /\/\/[^\/]*bridgebase\.com\/tools\/handviewer\.html\?[^"'\s<>]*/gi,
+        /handviewer\.html\?[^"'\s<>]*/gi
+      ];
+      
+      patterns.forEach((pattern, index) => {
+        console.log(`Testing pattern ${index + 1}:`, pattern);
+        const matches = htmlContent.match(pattern) || [];
+        console.log(`Pattern ${index + 1} found ${matches.length} matches:`, matches);
+        
+        matches.forEach(match => {
+          console.log('Processing match:', match);
+          let url = match;
+          if (url.startsWith('//')) {
+            url = 'https:' + url;
+          } else if (url.startsWith('handviewer.html')) {
+            url = 'https://www.bridgebase.com/tools/' + url;
+          }
+          
+          console.log('Normalized URL:', url);
+          const isValid = isValidHandviewerLink(url);
+          console.log('Is valid:', isValid);
+          
+          if (isValid) {
+            links.push(url);
+          }
+        });
+      });
+
+      return [...new Set(links)]; // Remove duplicates
+    }
+    function isValidHandviewerLink(url) {
+      try {
+        const urlObj = new URL(url);
+        const params = urlObj.searchParams;
+        
+        const hasHandParams = params.has('n') || params.has('e') || params.has('s') || params.has('w');
+        const hasOtherParams = params.has('lin') || params.has('myhand') || params.has('linurl');
+        const hasAuctionPlay = params.has('a') || params.has('p');
+        
+        return hasHandParams || hasOtherParams || hasAuctionPlay;
+      } catch {
+        return false;
+      }
+    }
+
+    function extractBoardInfo(url) {
+      try {
+        const urlObj = new URL(url);
+        const params = urlObj.searchParams;
+        
+        let boardNum = params.get('b') || '';
+        let players = {
+          north: params.get('nn') || '',
+          south: params.get('sn') || '',
+          east: params.get('en') || '',
+          west: params.get('wn') || ''
+        };
+        
+        return {
+          url: url,
+          boardNumber: boardNum,
+          players: players
+        };
+      } catch {
+        return {
+          url: url,
+          boardNumber: '',
+          players: { north: '', south: '', east: '', west: '' }
+        };
+      }
+    }
+
+    function displayFoundLinks(links) {
+          const foundList = $('#foundList');
+          const foundCount = $('#foundCount');
+          const btnCopyAll = $('#btnCopyAll');
+          
+          if (links.length === 0) {
+            foundCount.textContent = 'No handviewer links found.';
+            foundList.innerHTML = '';
+            btnCopyAll.style.display = 'none';
+            return;
+          }
+          
+          // Store links globally for pagination
+          window.allFoundLinks = links;
+          window.currentPage = 1;
+          window.itemsPerPage = parseInt(localStorage.getItem('linksPerPage') || '10');
+          
+          renderPaginatedLinks();
+        }
+
+    function renderPaginatedLinks() {
+  const links = window.allFoundLinks || [];
+  const currentPage = window.currentPage || 1;
+  const itemsPerPage = window.itemsPerPage || 10;
+  
+  const foundList = $('#foundList');
+  const foundCount = $('#foundCount');
+  const btnCopyAll = $('#btnCopyAll');
+  
+  // Calculate pagination
+  const totalPages = Math.ceil(links.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, links.length);
+  const currentLinks = links.slice(startIndex, endIndex);
+  
+  // Update count and show copy all button
+  foundCount.textContent = `Found ${links.length} handviewer link${links.length === 1 ? '' : 's'}`;
+  btnCopyAll.style.display = 'inline-block';
+  
+  // Create pagination controls
+  const paginationHtml = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 6px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 12px; color: #666;">Show:</span>
+        <select id="itemsPerPageSelect" style="padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px;">
+          <option value="1" ${itemsPerPage === 1 ? 'selected' : ''}>1</option>
+          <option value="5" ${itemsPerPage === 5 ? 'selected' : ''}>5</option>
+          <option value="10" ${itemsPerPage === 10 ? 'selected' : ''}>10</option>
+          <option value="25" ${itemsPerPage === 25 ? 'selected' : ''}>25</option>
+          <option value="50" ${itemsPerPage === 50 ? 'selected' : ''}>50</option>
+        </select>
+        <span style="font-size: 12px; color: #666;">per page</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 12px; color: #666;">
+          Showing ${startIndex + 1}-${endIndex} of ${links.length}
+        </span>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <button class="btn" style="padding: 4px 8px; font-size: 11px;" 
+                  onclick="changePage(${currentPage - 1})" 
+                  ${currentPage === 1 ? 'disabled' : ''}>‹ Prev</button>
+          <span style="padding: 4px 8px; font-size: 11px; color: #666;">
+            Page
+          </span>
+          <input id="pageJumpInput" type="number" min="1" max="${totalPages}" value="${currentPage}" 
+                 style="width: 50px; padding: 2px 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; text-align: center;"
+                 onkeypress="handlePageJump(event, ${totalPages})" />
+          <span style="padding: 4px 8px; font-size: 11px; color: #666;">
+            of ${totalPages}
+          </span>
+          <button class="btn" style="padding: 4px 8px; font-size: 11px;" 
+                  onclick="changePage(${currentPage + 1})" 
+                  ${currentPage === totalPages ? 'disabled' : ''}>Next ›</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Create links HTML
+  const linksHtml = currentLinks.map((link, index) => {
+    const globalIndex = startIndex + index;
+    const info = extractBoardInfo(link);
+    const boardText = info.boardNumber ? `Board ${info.boardNumber}` : `Link ${globalIndex + 1}`;
+    const playersText = info.players.north || info.players.south ? 
+      ` - ${info.players.north} & ${info.players.south} vs ${info.players.east} & ${info.players.west}` : '';
+    
+    return `
+      <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; background: #fff;">
+        <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px;">
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; margin-bottom: 4px;">${boardText}${playersText}</div>
+            <div style="font-family: ui-monospace, monospace; font-size: 12px; color: #666; word-break: break-all;">
+              ${link}
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-shrink: 0;">
+            <button class="btn" style="padding: 6px 10px; font-size: 12px;" onclick="loadHandviewerLink('${link.replace(/'/g, "\\'")}')">Load</button>
+            <button class="btn" style="padding: 6px 10px; font-size: 12px;" onclick="copyToClipboard('${link.replace(/'/g, "\\'")}')">Copy</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  foundList.innerHTML = paginationHtml + linksHtml;
+  
+  // Add event listener for items per page change
+  const select = $('#itemsPerPageSelect');
+  if (select) {
+    select.addEventListener('change', (e) => {
+      window.itemsPerPage = parseInt(e.target.value);
+      window.currentPage = 1; // Reset to first page
+      localStorage.setItem('linksPerPage', window.itemsPerPage);
+      renderPaginatedLinks();
+    });
+  }
+}
+
+    function handlePageJump(event, totalPages) {
+  if (event.key === 'Enter') {
+    const pageInput = event.target;
+    const newPage = parseInt(pageInput.value);
+    
+    if (newPage >= 1 && newPage <= totalPages) {
+      changePage(newPage);
+    } else {
+      // Reset to current page if invalid
+      pageInput.value = window.currentPage || 1;
+      // Optional: show a brief error indication
+      pageInput.style.borderColor = '#ff4d4f';
+      setTimeout(() => {
+        pageInput.style.borderColor = 'var(--border)';
+      }, 1000);
+    }
+  }
+}
+        // Add pagination functions
+    function changePage(newPage) {
+          const totalPages = Math.ceil((window.allFoundLinks || []).length / (window.itemsPerPage || 10));
+          if (newPage >= 1 && newPage <= totalPages) {
+            window.currentPage = newPage;
+            renderPaginatedLinks();
+          }
+        }
+
+        // Also update the copyAllLinks function to work with all links, not just visible ones:
+    async function copyAllLinks() {
+          const links = window.allFoundLinks || [];
+          
+          if (links.length > 0) {
+            const allLinks = links.join('\n');
+            await copyToClipboard(allLinks);
+            $('#btnCopyAll').textContent = 'Copied!';
+            setTimeout(() => $('#btnCopyAll').textContent = 'Copy all', 1200);
+          }
+        }
+
+    function loadHandviewerLink(url) {
+          $('#inputLink').value = url;
+          parseLink();
+        }
+
+    async function copyToClipboard(text) {
+          try {
+            await navigator.clipboard.writeText(text);
+          } catch (err) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+          }
+        }
+
+        // Event handlers for the import section
+        $('#btnExtract').addEventListener('click', () => {
+          const htmlContent = $('#resultHtml').value.trim();
+          if (!htmlContent) {
+            alert('Please paste some HTML content first.');
+            return;
+          }
+          
+          const links = extractHandviewerLinks(htmlContent);
+          displayFoundLinks(links);
+        });
+
+        $('#btnClearList').addEventListener('click', () => {
+          $('#foundList').innerHTML = '';
+          $('#foundCount').textContent = 'No links yet.';
+          $('#btnCopyAll').style.display = 'none';
+          $('#resultHtml').value = '';
+        });
+
+        $('#btnCopyAll').addEventListener('click', copyAllLinks);
+
+        $('#filePick').addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            $('#resultHtml').value = event.target.result;
+            const links = extractHandviewerLinks(event.target.result);
+            displayFoundLinks(links);
+          };
+          reader.readAsText(file);
+        });
 
     // Normalize a hand string to "s...h...d...c..." lowercase
     function normalizeHand(str){
