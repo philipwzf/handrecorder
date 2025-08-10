@@ -117,6 +117,212 @@
     }
     .bad{ outline:2px solid #ff4d4f; }
 
+    /* BBO-style layout for the popup play recorder*/
+    .bbo-bridge-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      height: 400px;
+      margin: 20px auto;
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+    }
+
+    .bbo-hand {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 8px;
+      min-width: 120px;
+    }
+
+    .bbo-north {
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .bbo-south {
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .bbo-east {
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .bbo-west {
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .bbo-hand-label {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .bbo-hand-cards {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .bbo-suit {
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .bbo-suit:before {
+      font-weight: bold;
+      margin-right: 2px;
+    }
+
+    .bbo-suit.spades:before { content: "♠"; color: black; }
+    .bbo-suit.hearts:before { content: "♥"; color: red; }
+    .bbo-suit.diamonds:before { content: "♦"; color: red; }
+    .bbo-suit.clubs:before { content: "♣"; color: black; }
+
+    .bbo-card {
+      cursor: pointer;
+      padding: 1px 2px;
+      margin: 0 1px;
+      border-radius: 2px;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .bbo-card.playable {
+      background: #e3f2fd;
+      border: 1px solid #2196f3;
+    }
+
+    .bbo-card.playable:hover {
+      background: #bbdefb;
+    }
+
+    .bbo-card.played {
+      opacity: 0.4;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+
+    .bbo-card.spades, .bbo-card.clubs { color: black; }
+    .bbo-card.hearts, .bbo-card.diamonds { color: red; }
+
+    .bbo-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 140px;
+      height: 100px;
+      text-align: center;
+    }
+
+    .bbo-trick-area {
+      position: relative;
+      width: 100px;
+      height: 70px;
+      margin: 0 auto 8px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .bbo-played-card {
+      position: absolute;
+      display: none;
+      font-size: 12px;
+      font-weight: bold;
+      background: white;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 2px 4px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .bbo-north-card { top: 2px; left: 50%; transform: translateX(-50%); }
+    .bbo-south-card { bottom: 2px; left: 50%; transform: translateX(-50%); }
+    .bbo-east-card { right: 2px; top: 50%; transform: translateY(-50%); }
+    .bbo-west-card { left: 2px; top: 50%; transform: translateY(-50%); }
+
+    .bbo-trick-info {
+      font-size: 11px;
+      color: #666;
+      text-align: center;
+    }
+
+    .bbo-controls {
+      display: flex;
+      gap: 8px;
+      margin: 16px 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .bbo-controls .btn {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    /* Play Recorder Popup Styles */
+    .play-recorder-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .play-recorder-popup {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow: auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .play-recorder-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel-bg);
+      border-radius: 12px 12px 0 0;
+    }
+
+    .play-recorder-content {
+      padding: 20px;
+    }
+
+    .sequence-display {
+      font-family: monospace;
+      background: white;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      min-height: 60px;
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+
     /* Mobile: stack vertically */
     @media (max-width: 980px){
       .container{
@@ -221,6 +427,9 @@
           <label for="play">Cards (lead first)</label>
           <textarea id="play" placeholder="e.g. sj sq sk sa da c2 d4 d3"></textarea>
           <div class="hint">Cards are suit+rank: sj, h9, da, ct…</div>
+          <button class="btn" type="button" onclick="playRecorder.open()" style="margin-top: 8px;">
+            🃏 Open Play Recorder
+          </button>
         </fieldset>
 
         <fieldset style="grid-column: span 12;">
@@ -578,6 +787,7 @@
       let s = str.replace(/\s+/g,"");
       s = s.replace(/S/g,'s').replace(/H/g,'h').replace(/D/g,'d').replace(/C/g,'c');
       s = s.replace(/[|,]/g,'');
+      s = s.replace(/10/g, 't');
       return s;
     }
 
@@ -606,6 +816,7 @@
       let bad = false;
       tokens = tokens.map(t=>{
         let x = t.toLowerCase();
+        x = x.replace(/10/g,'t');
         if(!ok.test(x)) bad = true;
         return x;
       });
@@ -664,7 +875,16 @@
       }
       const sp = u.searchParams;
 
-      const fill = (id, key) => { if(sp.get(key)) $(id).value = dec(sp.get(key)); };
+      const fill = (id, key) => { 
+        if(sp.get(key)) {
+          let value = dec(sp.get(key));
+          if(['n', 'e', 's', 'w', 'p'].includes(key)) {
+            value = value.replace(/10/g, 't');
+          }
+          $(id).value = value;
+
+        }
+      };
 
       // Reset first
       ['#nHand','#eHand','#sHand','#wHand','#auction','#play','#board','#claim'].forEach(id => $(id).value = '');
@@ -727,7 +947,10 @@
         else if(tag === 'sv'){ vul = val.toLowerCase(); }
         else if(tag === 'ah'){ const m = /board\s+(\d+)/i.exec(val); if(m) board = m[1]; }
         else if(tag === 'mb'){ bids.push(val.toUpperCase().replace(/NT/g,'N').toLowerCase()); }
-        else if(tag === 'pc'){ plays.push(val.toLowerCase()); }
+        else if(tag === 'pc'){ 
+          let playCard = val.toLowerCase().replace(/10/g,'t');
+          plays.push(val.toLowerCase()); 
+        }
         else if(tag === 'mc'){ claim = val; }
       }
 
@@ -742,6 +965,701 @@
       $('#board').value  = board || '';
       $('#claim').value  = claim || '';
     }
+    // Replace the PlayRecorder class with this enhanced version:
+
+    class PlayRecorder {
+      constructor() {
+        this.hands = { n: '', e: '', s: '', w: '' };
+        this.playSequence = [];
+        this.playedBy = []; // NEW: Track who played each card
+        this.currentPlayer = 0; // 0=N, 1=E, 2=S, 3=W
+        this.currentTrick = 0;
+        this.currentTrickCards = [];
+        this.leadSuit = null;
+        this.declarer = 0;
+        this.trumpSuit = null;
+        this.createPopup();
+      }
+
+
+      createPopup() {
+        const overlay = document.createElement('div');
+        overlay.className = 'play-recorder-overlay';
+        overlay.id = 'playRecorderOverlay';
+        
+        overlay.innerHTML = `
+          <div class="play-recorder-popup" style="max-width: 900px;">
+            <div class="play-recorder-header">
+              <h3 style="margin: 0;">Play Recorder</h3>
+              <button class="btn" onclick="playRecorder.close()">×</button>
+            </div>
+            <div class="play-recorder-content">
+              
+              <!-- BBO-style bridge table layout -->
+              <div class="bbo-bridge-container">
+                <!-- North hand -->
+                <div class="bbo-hand bbo-north">
+                  <div class="bbo-hand-label">North</div>
+                  <div class="bbo-hand-cards" id="bboNorthCards">
+                    <div class="bbo-suit spades" id="northSpades"></div>
+                    <div class="bbo-suit hearts" id="northHearts"></div>
+                    <div class="bbo-suit diamonds" id="northDiamonds"></div>
+                    <div class="bbo-suit clubs" id="northClubs"></div>
+                  </div>
+                </div>
+
+                <!-- West hand -->
+                <div class="bbo-hand bbo-west">
+                  <div class="bbo-hand-label">West</div>
+                  <div class="bbo-hand-cards" id="bboWestCards">
+                    <div class="bbo-suit spades" id="westSpades"></div>
+                    <div class="bbo-suit hearts" id="westHearts"></div>
+                    <div class="bbo-suit diamonds" id="westDiamonds"></div>
+                    <div class="bbo-suit clubs" id="westClubs"></div>
+                  </div>
+                </div>
+
+                <!-- Center play area -->
+                <div class="bbo-center">
+                  <div class="bbo-trick-area">
+                    <div class="bbo-played-card bbo-north-card" id="northPlayedCard"></div>
+                    <div class="bbo-played-card bbo-west-card" id="westPlayedCard"></div>
+                    <div class="bbo-played-card bbo-east-card" id="eastPlayedCard"></div>
+                    <div class="bbo-played-card bbo-south-card" id="southPlayedCard"></div>
+                  </div>
+                  <div class="bbo-trick-info">
+                    <div>Trick <span id="bboTrickNumber">1</span></div>
+                    <div id="bboCurrentPlayer">North to lead</div>
+                  </div>
+                </div>
+
+                <!-- East hand -->
+                <div class="bbo-hand bbo-east">
+                  <div class="bbo-hand-label">East</div>
+                  <div class="bbo-hand-cards" id="bboEastCards">
+                    <div class="bbo-suit spades" id="eastSpades"></div>
+                    <div class="bbo-suit hearts" id="eastHearts"></div>
+                    <div class="bbo-suit diamonds" id="eastDiamonds"></div>
+                    <div class="bbo-suit clubs" id="eastClubs"></div>
+                  </div>
+                </div>
+
+                <!-- South hand -->
+                <div class="bbo-hand bbo-south">
+                  <div class="bbo-hand-label">South</div>
+                  <div class="bbo-hand-cards" id="bboSouthCards">
+                    <div class="bbo-suit spades" id="southSpades"></div>
+                    <div class="bbo-suit hearts" id="southHearts"></div>
+                    <div class="bbo-suit diamonds" id="southDiamonds"></div>
+                    <div class="bbo-suit clubs" id="southClubs"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Controls -->
+              <div class="bbo-controls">
+                <button class="btn" onclick="playRecorder.rewind()">⏮ Rewind</button>
+                <button class="btn" onclick="playRecorder.undoLastCard()">⏪ Previous</button>
+                <button class="btn" onclick="playRecorder.nextCard()" id="nextCardBtn" style="display:none;">⏩ Next</button>
+                <button class="btn primary" onclick="playRecorder.applyToMainForm()">✓ Apply</button>
+              </div>
+              
+              <div style="margin-top: 16px;">
+                <label><strong>Play Sequence:</strong></label>
+                <div class="sequence-display" id="playSequenceDisplay"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(overlay);
+      }
+
+      // Calculate missing hand from the other 3 hands
+      calculateMissingHand() {
+        // Full deck of cards
+        const allCards = {
+          s: ['a', 'k', 'q', 'j', 't', '9', '8', '7', '6', '5', '4', '3', '2'],
+          h: ['a', 'k', 'q', 'j', 't', '9', '8', '7', '6', '5', '4', '3', '2'],
+          d: ['a', 'k', 'q', 'j', 't', '9', '8', '7', '6', '5', '4', '3', '2'],
+          c: ['a', 'k', 'q', 'j', 't', '9', '8', '7', '6', '5', '4', '3', '2']
+        };
+
+        // Get cards from known hands
+        const usedCards = new Set();
+        ['n', 'e', 's', 'w'].forEach(pos => {
+          if (this.hands[pos]) {
+            const hand = this.parseHand(this.hands[pos]);
+            Object.keys(hand).forEach(suit => {
+              hand[suit].forEach(rank => {
+                usedCards.add(suit + rank);
+              });
+            });
+          }
+        });
+
+        // Find which position is missing
+        let missingPos = null;
+        ['n', 'e', 's', 'w'].forEach(pos => {
+          if (!this.hands[pos] || this.hands[pos].trim() === '') {
+            missingPos = pos;
+          }
+        });
+
+        if (!missingPos) return; // All hands are present
+
+        // Calculate remaining cards
+        const remainingCards = { s: [], h: [], d: [], c: [] };
+        Object.keys(allCards).forEach(suit => {
+          allCards[suit].forEach(rank => {
+            if (!usedCards.has(suit + rank)) {
+              remainingCards[suit].push(rank);
+            }
+          });
+        });
+
+        // Convert back to hand string format
+        let handString = '';
+        ['s', 'h', 'd', 'c'].forEach(suit => {
+          if (remainingCards[suit].length > 0) {
+            handString += suit + remainingCards[suit].join('');
+          }
+        });
+
+        this.hands[missingPos] = handString;
+      }
+
+      parseHand(handString) {
+        const hand = { s: [], h: [], d: [], c: [] };
+        if (!handString) return hand;
+
+        handString = handString.replace(/10/g, 't'); // Normalize 10 to t
+        
+        let currentSuit = null;
+        for (let i = 0; i < handString.length; i++) {
+          const char = handString[i].toLowerCase();
+          if (['s', 'h', 'd', 'c'].includes(char)) {
+            currentSuit = char;
+          } else if (currentSuit && /[2-9tjqka]/i.test(char)) {
+            hand[currentSuit].push(char);
+          }
+        }
+        
+        return hand;
+      }
+
+
+      renderBBOHands() {
+        const positions = ['n', 'e', 's', 'w'];
+        const positionNames = ['north', 'east', 'south', 'west'];
+        
+        positions.forEach((pos, posIndex) => {
+          const hand = this.parseHand(this.hands[pos]);
+          const playedCards = this.getPlayedCards(posIndex);
+          
+          ['s', 'h', 'd', 'c'].forEach(suit => {
+            const container = $(`#${positionNames[posIndex]}${suit === 's' ? 'Spades' : suit === 'h' ? 'Hearts' : suit === 'd' ? 'Diamonds' : 'Clubs'}`);
+            container.innerHTML = '';
+            
+            if (hand[suit] && hand[suit].length > 0) {
+              // Sort cards in proper order (A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2)
+              const sortedCards = hand[suit].sort((a, b) => {
+                const order = ['a', 'k', 'q', 'j', 't', '9', '8', '7', '6', '5', '4', '3', '2'];
+                return order.indexOf(a) - order.indexOf(b);
+              });
+              
+              sortedCards.forEach(rank => {
+                const cardCode = suit + rank;
+                const isPlayed = playedCards.includes(cardCode);
+                
+                // FIX: Only check if this specific player can play, regardless of loop position
+                const canPlay = !isPlayed && (posIndex === this.currentPlayer) && this.canPlayCard(posIndex, suit, rank);
+                // console.log(`Rendering card ${cardCode} for player ${posIndex} (played: ${isPlayed}) (can play: ${canPlay})`);
+
+                const cardEl = document.createElement('span');
+                cardEl.className = `bbo-card ${suit}`;
+                cardEl.textContent = this.formatBBOCard(rank);
+                
+                if (isPlayed) {
+                  cardEl.classList.add('played');
+                } else if (canPlay) {
+                  cardEl.classList.add('playable');
+                  cardEl.addEventListener('click', () => this.playCard(posIndex, cardCode));
+                }
+                
+                container.appendChild(cardEl);
+              });
+            }
+          });
+        });
+      }
+      formatBBOCard(rank) {
+        const rankMap = { '10': 'T','t': 'T', 'j': 'J', 'q': 'Q', 'k': 'K', 'a': 'A' };
+        return rankMap[rank] || rank.toUpperCase();
+      }
+
+      getPlayedCards(playerIndex) {
+        const playedCards = [];
+        
+        for (let i = 0; i < this.playSequence.length; i++) {
+          if (this.playedBy[i] === playerIndex) {
+            playedCards.push(this.playSequence[i]);
+          }
+        }
+        
+        return playedCards;
+      }
+
+      canPlayCard(playerIndex, suit, rank) {
+        if (playerIndex !== this.currentPlayer) {
+          console.log(`Player ${playerIndex} tried to play out of turn when it's Player ${this.currentPlayer}'s turn.`);
+          return false;
+        }
+
+        const cardCode = suit + rank;
+        if (this.playSequence.includes(cardCode)) return false;
+        
+        // If leading to trick, can play any card
+        if (this.currentTrickCards.length === 0) return true;
+        
+        // Must follow suit if possible
+        if (this.leadSuit && suit !== this.leadSuit) {
+          const hand = this.parseHand(this.hands[['n','e','s','w'][playerIndex]]);
+          const playedCards = this.getPlayedCards(playerIndex);
+          const remainingInSuit = hand[this.leadSuit]?.filter(r => !playedCards.includes(this.leadSuit + r)) || [];
+          return remainingInSuit.length === 0; // Can only play other suits if no cards in lead suit
+        }
+        
+        return true;
+      }
+
+      playCard(playerIndex, cardCode) {
+        if (!this.canPlayCard(playerIndex, cardCode[0], cardCode[1])) return;
+        
+        this.playSequence.push(cardCode);
+        this.playedBy.push(playerIndex); // NEW: Track who played this card
+        this.currentTrickCards.push(cardCode);
+        
+        if (this.currentTrickCards.length === 1) {
+          this.leadSuit = cardCode[0];
+        }
+        
+        // Show played card in center
+        this.showPlayedCardInCenter(playerIndex, cardCode);
+        
+        if (this.currentTrickCards.length === 4) {
+          setTimeout(() => this.completeTrick(), 200); // Delay to show all 4 cards
+        } else {
+          this.nextPlayer();
+          // Only render when not completing a trick
+          this.renderBBOHands();
+          this.updateBBODisplay();
+        }
+        
+        this.updateSequenceDisplay();
+      }
+      
+      showPlayedCardInCenter(playerIndex, cardCode) {
+        const positions = ['north', 'east', 'south', 'west'];
+        const cardEl = $(`#${positions[playerIndex]}PlayedCard`);
+        cardEl.innerHTML = this.formatPlayedCard(cardCode);
+        cardEl.style.display = 'block';
+      }
+
+      formatPlayedCard(cardCode) {
+        const suit = cardCode[0];
+        const rank = cardCode[1];
+        const suitSymbol = { s: '♠', h: '♥', d: '♦', c: '♣' }[suit];
+        const rankDisplay = this.formatBBOCard(rank);
+        const color = (suit === 'h' || suit === 'd') ? 'red' : 'black';
+        
+        return `<span style="color: ${color}; font-weight: bold;">${rankDisplay}${suitSymbol}</span>`;
+      }
+
+      clearCenterCards() {
+        ['north', 'east', 'south', 'west'].forEach(pos => {
+          $(`#${pos}PlayedCard`).style.display = 'none';
+          $(`#${pos}PlayedCard`).innerHTML = '';
+        });
+      }
+
+      nextPlayer() {
+        this.currentPlayer = (this.currentPlayer + 1) % 4;
+      }
+
+      getRankValue(rank) {
+        const values = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 't': 10, 'j': 11, 'q': 12, 'k': 13, 'a': 14 };
+        return values[rank] || 0;
+      }
+
+      updateBBODisplay() {
+        const playerNames = ['North', 'East', 'South', 'West'];
+        $('#bboTrickNumber').textContent = this.currentTrick + 1;
+        
+        if (this.currentTrickCards.length === 0) {
+          $('#bboCurrentPlayer').textContent = `${playerNames[this.currentPlayer]} to lead`;
+        } else {
+          $('#bboCurrentPlayer').textContent = `${playerNames[this.currentPlayer]} to play`;
+        }
+      }
+
+      rewind() {
+        this.reset();
+      }
+
+      undoLastCard() {
+        if (this.playSequence.length === 0) return;
+  
+        this.playSequence.pop();
+        this.playedBy.pop(); // NEW: Remove the player tracking too
+        
+        // Completely reset and rebuild state
+        const tempSequence = [...this.playSequence];
+        const tempPlayedBy = [...this.playedBy];
+        
+        this.playSequence = [];
+        this.playedBy = [];
+        this.currentTrick = 0;
+        this.currentTrickCards = [];
+        this.currentPlayer = this.getLeader(); // Reset to leader
+        this.leadSuit = null;
+        
+        this.clearCenterCards();
+        
+        // Reprocess remaining cards
+        tempSequence.forEach((card, index) => {
+          this.playSequence.push(card);
+          this.playedBy.push(tempPlayedBy[index]);
+          this.currentTrickCards.push(card);
+          
+          if (this.currentTrickCards.length === 1) {
+            this.leadSuit = card[0];
+          }
+          this.showPlayedCardInCenter(tempPlayedBy[index], card);
+
+          if (this.currentTrickCards.length === 4) {
+            this.completeTrick();
+          } else {
+            this.nextPlayer();
+          }
+        });
+        
+        this.renderBBOHands();
+        this.updateBBODisplay();
+        this.updateSequenceDisplay();
+      }
+      // Add this new method to parse concatenated auction strings:
+parseAuctionString(auctionStr) {
+  const calls = [];
+  let i = 0;
+  
+  while (i < auctionStr.length) {
+    // Try to match pass
+    if (auctionStr.substr(i, 4) === 'pass') {
+      calls.push('p');
+      i += 4;
+    } else if (auctionStr[i] === 'p') {
+      calls.push('p');
+      i += 1;
+    }
+    // Try to match double/redouble
+    else if (auctionStr.substr(i, 4) === 'rdbl') {
+      calls.push('r');
+      i += 4;
+    } else if (auctionStr.substr(i, 3) === 'dbl') {
+      calls.push('x');
+      i += 3;
+    } else if (auctionStr[i] === 'x') {
+      calls.push('x');
+      i += 1;
+    } else if (auctionStr[i] === 'r') {
+      calls.push('r');
+      i += 1;
+    }
+    // Try to match bids (level + strain)
+    else if (/[1-7]/.test(auctionStr[i])) {
+      const level = auctionStr[i];
+      i += 1;
+      
+      // Look for strain after level
+      if (i < auctionStr.length) {
+        if (auctionStr.substr(i, 2) === 'nt') {
+          calls.push(level + 'n');
+          i += 2;
+        } else if (['c', 'd', 'h', 's', 'n'].includes(auctionStr[i])) {
+          calls.push(level + auctionStr[i]);
+          i += 1;
+        } else {
+          // Invalid strain, skip
+          i += 1;
+        }
+      }
+    }
+    // Skip unrecognized characters
+    else {
+      i += 1;
+    }
+  }
+  
+  return calls;
+}
+
+      getDeclarer() {
+        const auction = $('#auction').value.trim();
+        if (!auction) return null; // return null if no auction
+
+        const dealerMap = { 'n': 0, 'e': 1, 's': 2, 'w': 3 };
+        const dealer = dealerMap[$('#dealer').value] || 0;
+        
+        // Split auction into calls
+        let calls = [];
+        if (auction.includes(' ')) {
+          // Space-separated format: "p p 3n p p p"
+          calls = auction.toLowerCase().split(/\s+/).filter(call => call);
+        } else {
+          // Concatenated format: "pp3nppp" - need to parse individual calls
+          calls = this.parseAuctionString(auction.toLowerCase());
+        }
+        console.log('Auction calls:', calls);
+        if (calls.length === 0) return dealer;
+        
+        // Find the last actual bid (not pass/double/redouble)
+        let finalContract = null;
+        let finalBidIndex = -1;
+        
+        for (let i = calls.length - 1; i >= 0; i--) {
+          const call = calls[i];
+          // Skip passes, doubles, redoubles
+          if (['p', 'pass', 'x', 'xx', 'd', 'r', 'dbl', 'rdbl'].includes(call)) {
+            continue;
+          }
+          
+          // Check if it's a valid bid (level + strain)
+          if (call.length >= 2) {
+            const level = parseInt(call[0]);
+            const strain = call.substring(1);
+            
+            if (level >= 1 && level <= 7 && ['c', 'd', 'h', 's', 'n', 'nt'].includes(strain)) {
+              finalContract = { level, strain, call };
+              finalBidIndex = i;
+              break;
+            }
+          }
+        }
+        console.log('Final contract search:', finalContract, finalBidIndex);
+        
+        if (!finalContract) return dealer; // No valid contract found
+
+        // Set trump suit based on final contract
+        if (finalContract.strain === 'n' || finalContract.strain === 'nt') {
+          this.trumpSuit = null; // No trump
+        } else {
+          this.trumpSuit = finalContract.strain; // c, d, h, or s
+        }
+        
+        console.log('Final contract:', finalContract, 'at position', finalBidIndex);
+        
+        // Determine which side won the contract
+        const finalBidder = (dealer + finalBidIndex) % 4;
+        const winningSide = finalBidder % 2; // 0 = NS, 1 = EW
+        
+        console.log('Final bidder:', ['N','E','S','W'][finalBidder], 'Winning side:', winningSide === 0 ? 'NS' : 'EW');
+        
+        // Find the first player from the winning side to bid the final strain
+        for (let i = 0; i < calls.length; i++) {
+          const call = calls[i];
+          
+          // Skip non-bids
+          if (['p', 'pass', 'x', 'xx', 'd', 'r', 'dbl', 'rdbl'].includes(call)) {
+            continue;
+          }
+          
+          if (call.length >= 2) {
+            const strain = call.substring(1);
+            const bidder = (dealer + i) % 4;
+            const bidderSide = bidder % 2;
+            console.log(`Call ${i}: "${call}" by ${['N','E','S','W'][bidder]} (side ${bidderSide}), strain: "${strain}"`);
+
+            // Check if same strain and same side as final contract
+            if (strain === finalContract.strain && bidderSide === winningSide) {
+              console.log('Declarer found:', ['N','E','S','W'][bidder], 'first to bid', strain, 'from winning side');
+              return bidder;
+            }
+          }
+        }
+        
+        // Fallback: if we can't determine declarer properly, return the final bidder
+        console.log('Could not determine declarer properly, using final bidder');
+        return finalBidder;
+      }
+
+      // Add this method to get the leader (player to left of declarer):
+      getLeader() {
+        const declarer = this.getDeclarer();
+        const leader = (declarer + 1) % 4;
+        
+        console.log('Declarer:', ['N','E','S','W'][declarer], 'Leader:', ['N','E','S','W'][leader]);
+        return leader;
+      }
+      
+      reset() {
+        this.playSequence = [];
+        this.playedBy = [];
+        this.currentPlayer = this.getLeader(); // Use correct leader
+        this.currentTrick = 0;
+        this.currentTrickCards = [];
+        this.leadSuit = null;
+        this.clearCenterCards();
+        this.renderBBOHands();
+        this.updateBBODisplay();
+        this.updateSequenceDisplay();
+      }
+      
+      completeTrick() {
+        // Determine winner of the trick
+        let winningCardIndex = 0;
+        let winningCard = this.currentTrickCards[0];
+        
+        // Calculate who led this trick
+        const trickLeader = (this.currentPlayer + 1) % 4; // Move up 1 positions
+        
+        console.log('Completing trick:', this.currentTrickCards);
+        console.log('Lead suit:', this.leadSuit, 'Trump suit:', this.trumpSuit);
+        console.log('Trick leader:', ['N','E','S','W'][trickLeader]);
+        
+        // Find the highest card that follows suit, or highest trump
+        for (let i = 1; i < this.currentTrickCards.length; i++) {
+          const card = this.currentTrickCards[i];
+          const cardSuit = card[0];
+          const cardRank = card[1];
+          
+          // if curr card is the same suit as the curr winning card
+          if (cardSuit == winningCard[0]) {
+            // Same suit - higher rank wins
+            if (this.getRankValue(cardRank) > this.getRankValue(winningCard[1])) {
+              winningCard = card;
+              winningCardIndex = i;
+            }
+          } 
+          // else if trumpsuit is not null
+          else if (this.trumpSuit && cardSuit === this.trumpSuit) {
+            // Trump card beats non-trump
+            winningCard = card;
+            winningCardIndex = i;
+          }
+        }
+        
+        // Calculate who actually won (leader + winning card index)
+        const actualWinner = (trickLeader + winningCardIndex) % 4;
+        
+        console.log('Winning card:', winningCard, 'played by:', ['N','E','S','W'][actualWinner]);
+        
+        // Winner leads next trick
+        this.currentPlayer = actualWinner;
+        console.log('next trick by:',actualWinner);
+
+        this.currentTrick += 1;
+        this.currentTrickCards = [];
+        this.leadSuit = null;
+        
+        this.clearCenterCards();
+        this.updateBBODisplay();
+        this.renderBBOHands();
+      }
+
+      updateSequenceDisplay() {
+        const display = $('#playSequenceDisplay');
+        if (this.playSequence.length === 0) {
+          display.textContent = 'No cards played yet';
+        } else {
+          display.textContent = this.playSequence.join(' ');
+        }
+      } 
+    parseExistingPlay(playString) {
+      this.playSequence = [];
+      this.playedBy = [];
+      this.currentTrick = 0;
+      this.currentTrickCards = [];
+      this.currentPlayer = this.getLeader(); // Use correct leader
+      this.leadSuit = null;
+      
+      if (!playString) {
+        this.updateSequenceDisplay();
+        return;
+      }
+      
+      playString = playString.replace(/10/g, 't');
+
+      
+      // Parse cards like "sj sq sk sa" or "sjsqsksa"
+      let cards = [];
+      if (playString.includes(' ')) {
+        cards = playString.split(' ').filter(c => c.length === 2);
+      } else {
+        for (let i = 0; i < playString.length; i += 2) {
+          if (i + 1 < playString.length) {
+            cards.push(playString.substr(i, 2));
+          }
+        }
+      }
+      
+      cards.forEach((card, cardIndex) => {
+        if (card && card.length === 2) {
+          this.playSequence.push(card);
+          this.playedBy.push(this.currentPlayer);
+          this.currentTrickCards.push(card);
+          
+          if (this.currentTrickCards.length === 1) {
+            this.leadSuit = card[0];
+          }
+          
+          if (this.currentTrickCards.length === 4) {
+            this.completeTrick();
+          } else {
+            this.nextPlayer();
+          }
+        }
+      });
+      
+      this.updateSequenceDisplay();
+    }
+    open() {
+      // Get hands from main form
+      this.hands.n = normalizeHand($('#nHand').value);
+      this.hands.e = normalizeHand($('#eHand').value);
+      this.hands.s = normalizeHand($('#sHand').value);
+      this.hands.w = normalizeHand($('#wHand').value);
+      
+      // Calculate missing hand if any
+      this.calculateMissingHand();
+      
+      // Get the correct leader based on auction
+      this.currentPlayer = this.getLeader();
+      
+      // Get existing play sequence from main form
+      const existingPlay = $('#play').value.trim();
+      console.log('Loading existing play:', existingPlay);
+      
+      // Parse existing play sequence
+      this.parseExistingPlay(existingPlay);
+      
+      this.renderBBOHands();
+      this.updateBBODisplay();
+      $('#playRecorderOverlay').style.display = 'flex';
+    }
+    applyToMainForm() {
+      $('#play').value = this.playSequence.join(' ');
+      $('#play').dispatchEvent(new Event('input'));
+      this.close();
+    }
+
+      close() {
+        $('#playRecorderOverlay').style.display = 'none';
+      }
+    }
+
+    // Initialize play recorder
+    const playRecorder = new PlayRecorder();
 
     // ======= Wire up events =======
     $('#btnParse').addEventListener('click', parseLink);
