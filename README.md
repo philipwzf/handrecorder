@@ -6,7 +6,8 @@ For easy use, download the handrecorder.html file and open it in your browser. Y
 **TODO**
 - [x] Get hands from acbl live
 - [ ] Get hands from hand records
-- [ ] Clicker to help record the plays
+- [x] Clicker to help record the plays
+- [ ] debug play recorder
 
 ## Pair games with acbl live
 For pair games with acbl live scores, we used a similar program as [acbl live converter](https://www.tameware.com/adam/bridge/utilities/) made by Adam W to get the handviewer links from the score page. On the scores page of acbl live (the page that displays all scores for a specific pair), ask your browser to View Source (Chrome, Edge) or Show Page Source (Safari). Then copy the entire source code page to the textbox to get a list of all the hands played.
