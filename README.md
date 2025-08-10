@@ -1,14 +1,15 @@
 # handrecorder
 A better interactive hand editor that can render and parse handviewer link (.lin also supported).
 
+For easy use, download the handrecorder.html file and open it in your browser. You should be able to follow the instructions to edit any hand (or click load example if you don't have a hand in mind) and record the auction and/or play.
+
 **TODO**
-- [ ] Get hands from acbl live
+- [x] Get hands from acbl live
 - [ ] Get hands from hand records
 - [ ] Clicker to help record the plays
 
 ## Pair games with acbl live
-For pair games with acbl live scores, we can implement a similar program as [acbl live converter](https://www.tameware.com/adam/bridge/utilities/) made by adam W to get the handviewer links from the score page. Before this is done, we can use adam W to get the format for bridgewinner then adapt it for handviewer link
-
+For pair games with acbl live scores, we used a similar program as [acbl live converter](https://www.tameware.com/adam/bridge/utilities/) made by Adam W to get the handviewer links from the score page. On the scores page of acbl live (the page that displays all scores for a specific pair), ask your browser to View Source (Chrome, Edge) or Show Page Source (Safari). Then copy the entire source code page to the textbox to get a list of all the hands played.
 ## Get hands from hand records
 Right now no good ideas for this except using chatgpt. should have an easy pdf parser that can split up the file into different boards so chatgpt can focus more easily.
 
